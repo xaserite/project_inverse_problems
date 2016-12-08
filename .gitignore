@@ -1,0 +1,6 @@
+*.log
+*.eps
+*.pdf
+*.msh
+*.vtk
+*.pvsm
