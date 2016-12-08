@@ -1,0 +1,24 @@
+border a(t=0,1){x=t;y=0;};
+border b(t=0,1){x=1;y=t;};
+border c(t=0,1){x=1-t;y=1-t;};
+
+mesh Th = buildmesh (a(10) + b(10) + c(10));
+
+fespace Vh(Th,P1);
+
+real dt = 0.01;
+
+Vh u=0,v;
+
+
+problem Stokes(u,v,solver=CG,eps=1.0e-6) =
+	int2d(Th)( )
+	+ int2d(Th)( )
+	+ on( );
+
+for (i=0;i<Nit;i++)
+{
+    Stokes;
+};
+
+plot(a(10),b(10),c(10),wait=1);
