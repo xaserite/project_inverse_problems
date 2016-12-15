@@ -1,24 +1,22 @@
-border a(t=0,1){x=t;y=0;};
-border b(t=0,1){x=1;y=t;};
-border c(t=0,1){x=1-t;y=1-t;};
-
-mesh Th = buildmesh (a(10) + b(10) + c(10));
-
-fespace Vh(Th,P1);
-
-real dt = 0.01;
-
-Vh u=0,v;
-
-
-problem Stokes(u,v,solver=CG,eps=1.0e-6) =
-	int2d(Th)( )
-	+ int2d(Th)( )
-	+ on( );
-
-for (i=0;i<Nit;i++)
-{
-    Stokes;
-};
-
-plot(a(10),b(10),c(10),wait=1);
+int C1=99, C2=98; // could be anything such that != 0 and C1 != C2
+border C0(t=0,2*pi){x=5*cos(t); y=5*sin(t);}
+plot( C0(80)// to see the border of the domain
+	//+ C11(5)+C12(20)+C13(5)+C14(20)
+	//+ C21(5)+C22(20)+C23(5)+C24(20),
+	,wait=true);
+mesh Th=buildmesh( C0(80)
+	//+ C11(5)+C12(20)+C13(5)+C14(20)
+	//+ C21(5)+C22(20)+C23(5)+C24(20)
+	);
+plot(Th,wait=1);
+real x0 = 4., y0 = .0;
+fespace Vh(Th,P2); Vh phi,v,lambda;
+func kappa=exp(-(x-x0)*(x-x0)-(y-y0)*(y-y0));
+solve a(phi,v)= int2d(Th)(dx(phi)*dx(v)+dy(phi)*dy(v))
+						+ int2d(Th) (kappa*v)
+						+	on(C0,phi=0)
+						;
+solve b(lambda,v)= int2d(Th)(dx(lambda)*dx(v)+dy(lambda)*dy(v))
+							+ on(C0,lambda = dx(phi)*N.x + dy(phi)*N.y)
+							;
+plot(phi,wait=true, value=true, fill=true, ps="find_heat_source.eps");
