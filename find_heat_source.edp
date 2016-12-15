@@ -9,14 +9,36 @@ mesh Th=buildmesh( C0(80)
 	//+ C21(5)+C22(20)+C23(5)+C24(20)
 	);
 plot(Th,wait=1);
-real x0 = 4., y0 = .0;
-fespace Vh(Th,P2); Vh phi,v,lambda;
-func kappa=exp(-(x-x0)*(x-x0)-(y-y0)*(y-y0));
-solve a(phi,v)= int2d(Th)(dx(phi)*dx(v)+dy(phi)*dy(v))
-						+ int2d(Th) (kappa*v)
+real x0 = 4., y0 = .0,
+		xn=0, yn=0, alpha = .1, eps=1e-4;
+int i,imax = 100;
+fespace Vh(Th,P2); Vh phi,phi0,lambda=1000000,v;
+func f0=exp(-(x-x0)*(x-x0)-(y-y0)*(y-y0));
+func fn=exp(-(x-xn)*(x-xn)-(y-yn)*(y-yn));
+func g= dx(phi0)*N.x + dy(phi0)*N.y;
+func dfdx0 = 2*(x0-x)*f0;
+func dfdy0 = 2*(y0-y)*f0;
+func dIdx0 = int1d(Th,C0)(dfdx0*lambda);
+func dIdy0 = int1d(Th,C0)(dfdy0*lambda);
+func norm  = dIdx0*dIdx0 + dIdy0*dIdy0;
+problem initial(phi0,v)= int2d(Th)(dx(phi0)*dx(v)+dy(phi0)*dy(v))
+						+ int2d(Th) (f0*v)
+						+	on(C0,phi0=0)
+						;
+problem a(phi,v)= int2d(Th)(dx(phi)*dx(v)+dy(phi)*dy(v))
+						+ int2d(Th) (fn*v)
 						+	on(C0,phi=0)
 						;
-solve b(lambda,v)= int2d(Th)(dx(lambda)*dx(v)+dy(lambda)*dy(v))
-							+ on(C0,lambda = dx(phi)*N.x + dy(phi)*N.y)
+problem b(lambda,v)= int2d(Th)(dx(lambda)*dx(v)+dy(lambda)*dy(v))
+							+ on(C0,lambda = g- dx(phi)*N.x + dy(phi)*N.y)
 							;
-plot(phi,wait=true, value=true, fill=true, ps="find_heat_source.eps");
+initial;
+i=0;
+while(i<imax){
+	a;
+	b;
+	xn = xn-alpha*dIdx0;
+	yn = yn-alpha*dIdy0;
+	plot(phi,wait=false, value=true, fill=true, ps="find_heat_source.eps");
+	++i;
+}							
