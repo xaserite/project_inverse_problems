@@ -10,55 +10,55 @@ mesh Th=buildmesh( C0(80)
 	);
 plot(Th,wait=1);
 //
-real x0 = 3, y0 = 3, eps=1e-5, x0eps=x0+eps, y0eps=y0+eps,
-		xn=0, yn=0, alpha = 1;
+real x0 = 3, y0 = 0., eps=1.e-17, dx0=1.e-5, dy0=1.e-5,dIdx0=5.,dIdy0=5.,dGdx0,dGdy0,
+		xn=0., yn=0.;
 int i,imax = 100;
-fespace Vh(Th,P2); Vh phi,phi0,phix0eps,phiy0eps,lambda=1000000,v;
+fespace Vh(Th,P2); Vh phi,phi0,lambda=1000000,v;
 //
-func f0=exp(-(x-x0)*(x-x0)-(y-y0)*(y-y0));
-func fx0eps=exp(-(x-x0eps)*(x-x0eps)-(y-y0)*(y-y0));
-func fy0eps=exp(-(x-x0)*(x-x0)-(y-y0eps)*(y-y0eps));
-func fn=exp(-(x-xn)*(x-xn)-(y-yn)*(y-yn));
-func g= dx(phi0)*N.x + dy(phi0)*N.y;
-func gxeps= dx(phix0eps)*N.x + dy(phix0eps)*N.y;
-func gyeps= dx(phiy0eps)*N.x + dy(phiy0eps)*N.y;
-func dfdx0 = 2*(x0-x)*f0;
-func dfdy0 = 2*(y0-y)*f0;
-func I = .5 * int1d(Th,C0)( (g- dx(phi)*N.x-dy(phi)*N.y) * (g- dx(phi)*N.x-dy(phi)*N.y) );
-func Ixeps = .5 * int1d(Th,C0)( (gxeps- dx(phi)*N.x-dy(phi)*N.y) * (gxeps- dx(phi)*N.x-dy(phi)*N.y) );
-func Iyeps = .5 * int1d(Th,C0)( (gyeps- dx(phi)*N.x-dy(phi)*N.y) * (gyeps- dx(phi)*N.x-dy(phi)*N.y) );
-func dIdx0 = (Ixeps-I)/eps;
-func dIdy0 = (Iyeps-I)/eps;
+func g = dx(phi0)*N.x + dy(phi0)*N.y;
+func I = .5 * int1d(Th,C0)( (g - dx(phi)*N.x-dy(phi)*N.y)^2 );
+
 func norm  = dIdx0*dIdx0 + dIdy0*dIdy0;
-//
-problem initial(phi0,v)= int2d(Th)(dx(phi0)*dx(v)+dy(phi0)*dy(v))
-						+ int2d(Th) (f0*v)
-						+	on(C0,phi0=0)
-						;
-problem initialxeps(phix0eps,v)= int2d(Th)(dx(phix0eps)*dx(v)+dy(phix0eps)*dy(v))
-						+ int2d(Th) (fx0eps*v)
-						+	on(C0,phix0eps=0)
-						;
-problem initialyeps(phiy0eps,v)= int2d(Th)(dx(phiy0eps)*dx(v)+dy(phiy0eps)*dy(v))
-						+ int2d(Th) (fy0eps*v)
-						+	on(C0,phiy0eps=0)
-						;
+
+func real G(real x, real x0, real y, real y0)
+{
+  return exp(-(x-x0)^2-(y-y0)^2);
+}
+
+func real alpha(H)
+{
+	if(H>eps)
+		return 1./H;
+	else 
+		return 1e6;
+}
+
 problem a(phi,v)= int2d(Th)(dx(phi)*dx(v)+dy(phi)*dy(v))
-						+ int2d(Th) (fn*v)
+						+ int2d(Th) (G(x,xn,y,yn)*v)
 						+	on(C0,phi=0)
 						;
 problem b(lambda,v)= int2d(Th)(dx(lambda)*dx(v)+dy(lambda)*dy(v))
-							+ on(C0,lambda = g- dx(phi)*N.x + dy(phi)*N.y)
+							+ on(C0,lambda = g- dx(phi)*N.x - dy(phi)*N.y)
 							;
+
+problem initial(phi0,v)= int2d(Th)(dx(phi0)*dx(v)+dy(phi0)*dy(v))
+						+ int2d(Th) (G(x,x0,y,y0)*v)
+						+	on(C0,phi0=0)
+						;
+
 initial;
 
-while(norm>eps){
-	a;
-	b;
-	initialxeps;
-	initialyeps;
-	xn = xn-alpha*dIdx0;
-	yn = yn-alpha*dIdy0;
+cout << "norm = " << " " << norm << " | eps = " << eps << endl;
+while(1){
+	a; // DPhi = G
+	b; // Dlambda = 0
+  dGdx0 = (G(x,x0+dx0,y,y0)-G(x,x0,y,y0))/dx0; // dG/dx0
+  dGdy0 = (G(x,x0,y,y0+dy0)-G(x,x0,y,y0))/dy0; // dG/dy0
+  dIdx0 = -int2d(Th)(lambda*dGdx0); // dI/dx0
+  dIdy0 = -int2d(Th)(lambda*dGdy0); // dI/dy0
+	xn = xn-pow(norm,.1)*100000*dIdx0;
+	yn = yn-pow(norm,.1)*100000*dIdy0;
 	plot(phi,wait=false, value=true, fill=true
 		,cmm="norm= "+norm+"; x= "+xn+"; y= "+yn);
+  cout << "norm = " << " " << norm << " | eps = " << eps << endl;
 }						
