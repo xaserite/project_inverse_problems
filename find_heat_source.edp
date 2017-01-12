@@ -1,5 +1,5 @@
 int C1=99, C2=98; // could be anything such that != 0 and C1 != C2
-border C0(t=0,2*pi){x=5*cos(t); y=5*sin(t);}
+border C0(t=0,2*pi){x=1*cos(t); y=1*sin(t);}
 plot( C0(80)// to see the border of the domain
 	//+ C11(5)+C12(20)+C13(5)+C14(20)
 	//+ C21(5)+C22(20)+C23(5)+C24(20),
@@ -10,8 +10,8 @@ mesh Th=buildmesh( C0(80)
 	);
 plot(Th,wait=1);
 //
-real x0 = 3, y0 = 0., eps=1.e-17, dx0=1.e-5, dy0=1.e-5,dIdx0=5.,dIdy0=5.,dGdx0,dGdy0,
-		xn=0., yn=0.;
+real x0 = .95, y0 = 0, eps=1.e-2, dx0=1.e-5, dy0=1.e-5,dIdx0=5.,dIdy0=5.,dGdx0,dGdy0,
+		xn=0., yn=0., refnorm=1, xv, yv;
 int i,imax = 100;
 fespace Vh(Th,P2); Vh phi,phi0,lambda=1000000,v;
 //
@@ -25,12 +25,12 @@ func real G(real x, real x0, real y, real y0)
   return exp(-(x-x0)^2-(y-y0)^2);
 }
 
-func real alpha(H)
+func real alpha(real H, real R)
 {
-	if(H>eps)
-		return 1./H;
+	if(H/R>eps)
+		return .1/sqrt(H);
 	else 
-		return 1e6;
+		return 1;
 }
 
 problem a(phi,v)= int2d(Th)(dx(phi)*dx(v)+dy(phi)*dy(v))
@@ -47,8 +47,10 @@ problem initial(phi0,v)= int2d(Th)(dx(phi0)*dx(v)+dy(phi0)*dy(v))
 						;
 
 initial;
+plot(phi0,wait=true, value=true, fill=true);
 
 cout << "norm = " << " " << norm << " | eps = " << eps << endl;
+i = 0;
 while(1){
 	a; // DPhi = G
 	b; // Dlambda = 0
@@ -56,9 +58,11 @@ while(1){
   dGdy0 = (G(x,x0,y,y0+dy0)-G(x,x0,y,y0))/dy0; // dG/dy0
   dIdx0 = -int2d(Th)(lambda*dGdx0); // dI/dx0
   dIdy0 = -int2d(Th)(lambda*dGdy0); // dI/dy0
-	xn = xn-pow(norm,.1)*100000*dIdx0;
-	yn = yn-pow(norm,.1)*100000*dIdy0;
+	if(i==0) refnorm = norm;
+	xn = xn-alpha(norm,refnorm)*dIdx0;
+	yn = yn-alpha(norm,refnorm)*dIdy0;
 	plot(phi,wait=false, value=true, fill=true
 		,cmm="norm= "+norm+"; x= "+xn+"; y= "+yn);
   cout << "norm = " << " " << norm << " | eps = " << eps << endl;
+	i++;
 }						
