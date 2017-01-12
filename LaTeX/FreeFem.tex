@@ -1,0 +1,36 @@
+%\usepackage{algorithm}
+%\usepackage{algorithmic}
+
+\section{FreeFem}
+To solve this problem we use FreeFem++. Fisrt we have to define the problems we need to solve at each iteration. 
+We have 
+\begin{align}\label{eq1}
+& \Delta \Phi = G \\
+& \left. \Phi\right|_{\partial\Omega} = 0\nonumber
+\end{align}
+\begin{align}\label{eq2}
+& \Delta \lambda = 0 \\
+& \left. \lambda\right|_{\partial\Omega} = g(s)-\frac{\partial \Phi}{\partial n}\nonumber
+\end{align}
+Where g is a function that calculates $\frac{\partial \Phi_0}{\partial n}$. \\
+We define two problems named \textit{a} and \textit{b} that solves respectively problems (\ref{eq1}) and (\ref{eq2}).\\
+Moreover, in order to get the value of g, we have to define a problem called \textit{initial} that solves $\Delta \Phi_0 = G(x,x_0,y,y_0)$
+\lstinputlisting[language=C++]{../problems.edp}
+
+We use a gradient descent algorithm to find the position of the source.\\
+\begin{algorithm}
+\caption{Gradient algorithm}
+\begin{algorithmic} 
+\WHILE{$||\nabla f(x_k)|| \geqslant \epsilon$}
+\STATE calculation of $\nabla f(x_k)$.
+\STATE calculation of $\alpha_k$
+\STATE $x_{k+1} = x_k - \alpha_k \nabla f(x_k)$
+\ENDWHILE
+\end{algorithmic}
+\end{algorithm}
+
+We know that $\frac{\partial I}{\partial x_0} = -\int_{\Omega}\lambda \frac{\partial G}{\partial x_0} dx$ and $\frac{\partial I}{\partial y_0} = -\int_{\Omega}\lambda \frac{\partial G}{\partial y_0} dx$. So we need to calculate $\nabla G(x_0,y_0)$ and $\lambda$. To get $\lambda$, we must calculate the problem \textit{b} and to do that we need to calculate the problem \textit{a}.
+
+Then we have to calculate the coefficient $\alpha_k$
+
+\lstinputlisting[language=C++]{../gradient.edp}
