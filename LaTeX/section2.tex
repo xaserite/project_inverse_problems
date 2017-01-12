@@ -1,0 +1,81 @@
+\section{Gradient method approach}
+In order to find a practical solution of the minimization problem (\ref{eq:3}-\ref{eq:4}) we have to subdivide the procedure into the following steps: in \textit{section 2.1} we use a variational approach to deduce a necessary condition for the minimizing heat distribution. In \textit{section 2.2} we take an adjoint equation approach in order to obtain necessary and sufficient conditions for a the heat coordinates. A combination of these two results in \textit{section 2.3} allows us to derive a gradient method.
+
+\subsection{Variational calculus ansatz}
+Let $\widetilde{\phi}\in\mathcal{C}$ be an arbitrary perturbation of a distribution $\phi$ by a small parameter $\epsilon>0$. We define the gradient approximate $J_\epsilon$ of $I$ toward $\widetilde{\phi}$ by
+\begin{equation}\label{eq:5}
+	J_\epsilon(\phi) =
+	\frac{1}{\epsilon}
+	\left[
+		I(\phi+\epsilon\widetilde{\phi})-I(\phi)
+	\right].
+\end{equation}
+Using elementary operations, one can show that it holds
+\begin{equation}\label{eq:6}
+	J_\epsilon(\phi) =
+	\frac{\epsilon}{2}\int_\Omega \left(\frac{\partial\widetilde{\phi}}{\partial n}\right)^2 \mathrm{d}s
+	\,+\,\int_{\Omega} \frac{\partial\widetilde{\phi}}{\partial n} 
+		\left(g-\frac{\partial\phi}{\partial n}\right) \mathrm{d}s.
+\end{equation}
+Thus, taking the limit $\epsilon\to 0$, we gain a necessary condition for the minimizer $\phi^*$:
+\begin{equation}\label{eq:7}
+	J_0(\phi^*) = 
+	\int_{\Omega} \frac{\partial\widetilde{\phi}}{\partial n} 
+		\left(g-\frac{\partial\phi^*}{\partial n}\right) \mathrm{d}s
+	= 0.
+\end{equation}
+Since $\widetilde{\phi}$ is arbitrary, we have shown that all directional derivatives of $I$ at $\phi^*$ must be zero. We can now conclude from the following two claims that this is already sufficient. 
+\begin{itemize}
+	\item \underline{first claim:} $\mathcal C$ is convex.\\
+	Let $\alpha\in(0,1)$, $\phi_1,\phi_2\in\mathcal C$. Then
+	\begin{equation*}
+		\Delta \left(\alpha\phi_1 + (1-\alpha)\phi_2\right)
+		= \alpha \Delta \phi_1 + (1-\alpha)\Delta\phi_2
+		= (\alpha + 1 - \alpha)G = G.
+	\end{equation*}
+	\item \underline{second claim:} $I$ is convex.\\
+	Indeed, $I$ is the composition $I = L\circ Q\circ D$, where\\
+	$\:L=\int_{\partial\Omega}\cdot\,\mathrm ds$ is linear, $\:Q=\frac{1}{2}(\:\cdot\:)^2$ is quadratic, thus convex and $\:D=(\frac{\partial\,\cdot}{\partial n}-g)$ is linear.
+\end{itemize}
+As we find ourselves in the Hilbert space setting of $L^2$, we can make use of the scalar product $\left(\cdot,\cdot\right) = \left(\cdot,\cdot\right)_{L^2(\partial \Omega)}$ and note the necessary condition (\ref{eq:7}) as follows:
+\begin{equation}\label{eq:8}
+	\left(\nabla Q(D(\phi)),\frac{\partial \widetilde{\phi}}{\partial n}\right)
+	\overset{!}{=}0,
+\end{equation}
+i.e. at the minimum $\phi^*$ the gradient of $Q\circ D$ has to be orthogonal to the outer heat flux of any perturbation $\widetilde{\phi}$.
+
+\subsection{Lagrange Multiplier in $\mathcal C$}
+In order to incorporate the auxiliary condition (\ref{eq:4}) into the minimization routine, we introduce the Lagrange multiplier $\lambda\in H^1(\Omega)$. We will see later why $H^1$ is a good choice.
+
+Consider the first order linearization of (\ref{eq:4}):
+\begin{equation}\label{eq:9}
+	\Delta\left(\phi+\epsilon\widetilde{\phi}\right)
+	= G(x_0,y_0)+\epsilon
+		\left(\frac{\partial G}{\partial x_0}x_0+\frac{\partial G}{\partial y_0}y_0\right)
+		+ \mathcal O(\epsilon^2).
+\end{equation}
+This directly yields
+\begin{equation}\label{eq:10}
+	\Delta\widetilde{\phi} 
+	= \frac{\partial G}{\partial x_0}x_0+\frac{\partial G}{\partial y_0}y_0
+\end{equation}
+for any perturbation $\widetilde{\phi}$.
+Testing (\ref{eq:10}) with $\lambda$ and integrating leads to
+\begin{equation}\label{eq:11}
+	\int_\Omega \lambda \left( 
+		\Delta\widetilde{\phi} 
+		- \frac{\partial G}{\partial x_0}x_0-\frac{\partial G}{\partial y_0}y_0
+	\right)\,\mathrm{d}x
+	= 0.
+\end{equation}
+We now integrate $\lambda\Delta \widetilde{\phi}$ by parts twice and obtain
+\begin{align}\label{eq:12}
+	&\int_\Omega \widetilde{\phi} \Delta\lambda
+	-\lambda \left( 
+	 \frac{\partial G}{\partial x_0}x_0+\frac{\partial G}{\partial y_0}y_0
+	\right)\,\mathrm{d}x\\
+	-&\int_{\partial \Omega} \lambda \,\frac{\partial\widetilde{\phi}}{\partial n}\:\mathrm{d}s
+	+\int_{\partial \Omega}\frac{\partial\lambda}{\partial n}\,\widetilde{\phi}\:\mathrm{d}s
+	= 0,\nonumber
+\end{align}
+which must be fulfilled for all $\lambda$ and all $\widetilde{\phi}$, thereby giving us necessary and sufficient conditions on $(x_0,y_0)$.
