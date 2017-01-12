@@ -11,7 +11,7 @@ mesh Th=buildmesh( C0(80)
 plot(Th,wait=1);
 //
 real x0 = .95, y0 = 0, eps=1.e-2, dx0=1.e-5, dy0=1.e-5,dIdx0=5.,dIdy0=5.,dGdx0,dGdy0,
-		xn=0., yn=0., refnorm=1, xv, yv;
+		xn=0., yn=0., refnorm=1, xv, yv,stop=1.e-15;
 int i,imax = 100;
 fespace Vh(Th,P2); Vh phi,phi0,lambda=1000000,v;
 //
@@ -30,7 +30,7 @@ func real alpha(real H, real R)
 	if(H/R>eps)
 		return .1/sqrt(H);
 	else 
-		return 1;
+		return 1.;
 }
 
 problem a(phi,v)= int2d(Th)(dx(phi)*dx(v)+dy(phi)*dy(v))
@@ -47,11 +47,11 @@ problem initial(phi0,v)= int2d(Th)(dx(phi0)*dx(v)+dy(phi0)*dy(v))
 						;
 
 initial;
-plot(phi0,wait=true, value=true, fill=true);
+plot(phi0,wait=true, value=true, fill=true,cmm="Exact solution : x="+x0+"; y="+y0);
 
 cout << "norm = " << " " << norm << " | eps = " << eps << endl;
 i = 0;
-while(1){
+while(sqrt(norm)>stop){
 	a; // DPhi = G
 	b; // Dlambda = 0
   dGdx0 = (G(x,x0+dx0,y,y0)-G(x,x0,y,y0))/dx0; // dG/dx0
@@ -62,7 +62,7 @@ while(1){
 	xn = xn-alpha(norm,refnorm)*dIdx0;
 	yn = yn-alpha(norm,refnorm)*dIdy0;
 	plot(phi,wait=false, value=true, fill=true
-		,cmm="norm= "+norm+"; x= "+xn+"; y= "+yn);
-  cout << "norm = " << " " << norm << " | eps = " << eps << endl;
+		,cmm="norm= "+sqrt(norm)+"; x= "+xn+"; y= "+yn);
+  cout << "norm = " << " " << sqrt(norm) << " | eps = " << eps << endl;
 	i++;
 }						
