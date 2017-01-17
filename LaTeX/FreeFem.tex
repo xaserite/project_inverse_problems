@@ -1,20 +1,20 @@
 %\usepackage{algorithm}
 %\usepackage{algorithmic}
 
-\section{FreeFem}
-To solve this problem we use FreeFem++. Fisrt we have to define the problems we need to solve at each iteration. 
+\section{Implementation in FreeFem++}
+To solve this problem we use FreeFem++. First we have to define the problems we need to solve at each iteration. 
 We have 
 \begin{align}\label{eq1}
-& \Delta \Phi = G \\
-& \left. \Phi\right|_{\partial\Omega} = 0\nonumber
+& \Delta \phi = G \\
+& \left. \phi\right|_{\partial\Omega} = 0\nonumber
 \end{align}
 \begin{align}\label{eq2}
 & \Delta \lambda = 0 \\
-& \left. \lambda\right|_{\partial\Omega} = g(s)-\frac{\partial \Phi}{\partial n}\nonumber
+& \left. \lambda\right|_{\partial\Omega} = g(s)-\frac{\partial \phi}{\partial n}\nonumber
 \end{align}
-Where g is a function that calculates $\frac{\partial \Phi_0}{\partial n}$. \\
+where g is an approximate function to $\frac{\partial \phi_0}{\partial n}$. \\
 We define two problems named \textit{a} and \textit{b} that solves respectively problems (\ref{eq1}) and (\ref{eq2}).\\
-Moreover, in order to get the value of g, we have to define a problem called \textit{initial} that solves $\Delta \Phi_0 = G(x,x_0,y,y_0)$
+Moreover, in order to get the value of g, we have to define a problem called \textit{initial} that solves $\Delta \phi_0 = G(x,x_0,y,y_0)$
 \lstinputlisting[language=C++]{../problems.edp}
 
 We use a gradient descent algorithm to find the position of the source.\\

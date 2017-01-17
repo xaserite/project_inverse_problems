@@ -1,5 +1,5 @@
 \section{Gradient method approach}
-In order to find a practical solution of the minimization problem (\ref{eq:3}-\ref{eq:4}) we have to subdivide the procedure into the following steps: in \textit{section 2.1} we use a variational approach to deduce a necessary condition for the minimizing heat distribution. In \textit{section 2.2} we take an adjoint equation approach in order to obtain necessary and sufficient conditions for a the heat coordinates. A combination of these two results in \textit{section 2.3} allows us to derive a gradient method.
+In order to find a practical solution of the minimization problem (\ref{eq:3}-\ref{eq:4}) we have to subdivide the procedure into the following steps: in \textit{section 2.1} we use a variational approach to deduce a necessary condition for the minimizing heat distribution. In \textit{section 2.2} we take an adjoint equation approach in order to obtain necessary and sufficient conditions for a the heat coordinates. A combination of these two results in \textit{section 2.3} allows us to derive a gradient method in \textit{section 2.4}.
 
 \subsection{Variational calculus ansatz}
 Let $\widetilde{\phi}\in\mathcal{C}$ be an arbitrary perturbation of a distribution $\phi$ by a small parameter $\epsilon>0$. We define the gradient approximate $J_\epsilon$ of $I$ toward $\widetilde{\phi}$ by
@@ -13,14 +13,14 @@ Let $\widetilde{\phi}\in\mathcal{C}$ be an arbitrary perturbation of a distribut
 Using elementary operations, one can show that it holds
 \begin{equation}\label{eq:6}
 	J_\epsilon(\phi) =
-	\frac{\epsilon}{2}\int_\Omega \left(\frac{\partial\widetilde{\phi}}{\partial n}\right)^2 \mathrm{d}s
-	\,+\,\int_{\Omega} \frac{\partial\widetilde{\phi}}{\partial n} 
+	\frac{\epsilon}{2}\int_{\partial\Omega} \left(\frac{\partial\widetilde{\phi}}{\partial n}\right)^2 \mathrm{d}s
+	\,+\,\int_{\partial\Omega} \frac{\partial\widetilde{\phi}}{\partial n} 
 		\left(g-\frac{\partial\phi}{\partial n}\right) \mathrm{d}s.
 \end{equation}
 Thus, taking the limit $\epsilon\to 0$, we gain a necessary condition for the minimizer $\phi^*$:
 \begin{equation}\label{eq:7}
 	J_0(\phi^*) = 
-	\int_{\Omega} \frac{\partial\widetilde{\phi}}{\partial n} 
+	\int_{\partial\Omega} \frac{\partial\widetilde{\phi}}{\partial n} 
 		\left(g-\frac{\partial\phi^*}{\partial n}\right) \mathrm{d}s
 	= 0.
 \end{equation}
@@ -68,14 +68,91 @@ Testing (\ref{eq:10}) with $\lambda$ and integrating leads to
 	\right)\,\mathrm{d}x
 	= 0.
 \end{equation}
-We now integrate $\lambda\Delta \widetilde{\phi}$ by parts twice and obtain
+We now integrate $\lambda\Delta \widetilde{\phi}$ by parts twice and obtain, noticing that $\widetilde{\phi}\in H^1_0$ is zero on the boundary, 
 \begin{align}\label{eq:12}
-	&\int_\Omega \widetilde{\phi} \Delta\lambda
-	-\lambda \left( 
+	&\int_\Omega \widetilde{\phi} \Delta\lambda \:\mathrm{d}x
+	-\int_\Omega\lambda \left( 
 	 \frac{\partial G}{\partial x_0}x_0+\frac{\partial G}{\partial y_0}y_0
 	\right)\,\mathrm{d}x\\
-	-&\int_{\partial \Omega} \lambda \,\frac{\partial\widetilde{\phi}}{\partial n}\:\mathrm{d}s
-	+\int_{\partial \Omega}\frac{\partial\lambda}{\partial n}\,\widetilde{\phi}\:\mathrm{d}s
+	+&\int_{\partial \Omega} \lambda \,\frac{\partial\widetilde{\phi}}{\partial n}\:\mathrm{d}s
 	= 0,\nonumber
 \end{align}
-which must be fulfilled for all $\lambda$ and all $\widetilde{\phi}$, thereby giving us necessary and sufficient conditions on $(x_0,y_0)$.
+which must be fulfilled for all $\lambda$ and all $\widetilde{\phi}$, thereby giving us necessary and sufficient conditions on $(x_0,y_0)$. $\mathcal{C}$ is spanned by the linear, self-adjoint operator $\Delta$. We have only used the adjoint in the first part, therefore we call (\ref{eq:12}) pseudo adjoint equation.
+
+\subsection{Application of the Lagrange multiplier to the necessary condition (\ref{eq:8})}
+Subtracting pseudo adjoint equation and necessary condition on $\phi$ from each other, we obtain
+\begin{align}\label{eq:13}
+	&\int_\Omega \widetilde{\phi} \Delta\lambda \:\mathrm{d}x
+	-\int_\Omega\lambda \left( 
+	\frac{\partial G}{\partial x_0}x_0+\frac{\partial G}{\partial y_0}y_0
+	\right)\,\mathrm{d}x\\
+	+&\int_{\partial \Omega} \lambda \,\frac{\partial\widetilde{\phi}}{\partial n}\:\mathrm{d}s
+	-\int_{\partial\Omega} \frac{\partial\widetilde{\phi}}{\partial n} 
+		\left(g-\frac{\partial\phi^*}{\partial n}\right) \mathrm{d}s
+	= 0,\nonumber
+\end{align}
+from which we can find this particular choice for $\lambda$:
+\begin{itemize}
+	\item[1)] $\Delta\lambda=0$ in $\Omega$,
+	\item[2)] $\lambda=g-\frac{\partial\phi}{\partial n}$ on $\partial\Omega$,
+	\item[3)] $\int_{\Omega}\lambda\frac{\partial G}{\partial x_0}
+			  =\int_{\Omega}\lambda\frac{\partial G}{\partial y_0} = 0,$
+\end{itemize}
+causing all individual integrals to vanish or to eliminate each other respectively.
+Together with 
+\begin{itemize}
+	\item[4)] $\Delta\phi=G$,
+\end{itemize}
+we have thus everything to solve the inverse problem. However, if $N$ is the degree of freedoms of a (finite element) function space employed to resolve $\mathcal{C}$, the corresponding system size amounts to $\sim 2N$. We would rather like to solve a system of size $N$ and iterate. 
+
+\subsection{Gradient method}
+We calculate the derivatives of $I$ wrt. $x_0,y_0$:
+\begin{align}\label{eq:14}
+	\partial_{x_0} I = \int_{\partial\Omega}
+		\left(
+			\frac{\partial\phi}{\partial n} - g
+		\right)
+		\frac{\partial}{\partial n}\frac{\partial\widetilde{\phi}}{\partial x_0}
+	\:\mathrm{d}s\\
+		\partial_{y_0} I = \int_{\partial\Omega}
+		\left(
+			\frac{\partial\phi}{\partial n} - g
+		\right)
+		\frac{\partial}{\partial n}\frac{\partial\widetilde{\phi}}{\partial y_0}
+	\:\mathrm{d}s. \label{eq:15}
+\end{align}
+Now it holds for all $\widetilde{\phi}\in\mathcal{C}$, $\lambda\in H^1_0(\Omega)$:
+\begin{align}\label{eq:16}
+	&\Delta\widetilde{\phi} = G\\
+	\Rightarrow &\int_\Omega \lambda
+		\left(\Delta\frac{\partial\widetilde{\phi}}{\partial x_0}
+		-\frac{\partial G}{\partial x_0}\right)
+	=0,\label{eq:17}
+\end{align}
+and in the same fashion for $y_0$. We shift derivatives on 
+$\lambda \Delta\frac{\partial\widetilde{\phi}}{\partial x_0}$
+twice, using that $\left. \widetilde{\phi}\right|_{\partial\Omega}=0$ independently of $x_0$:
+\begin{align}\label{eq:18}
+	\int_{\Omega}\Delta\lambda \frac{\partial\widetilde{\phi}}{\partial x_0}
+	\:\mathrm{d}x
+	-\int_\Omega \lambda \frac{\partial G}{\partial x_0}
+	\:\mathrm{d}x
+	+\int_{\partial\Omega} \lambda 
+		\frac{\partial}{\partial n}\frac{\partial\widetilde{\phi}}{\partial x_0}
+	\:\mathrm{d}s
+	=0.
+\end{align}
+Choosing again $\lambda$ to satisfy 1) and 2), this yields
+\begin{align}\label{eq:19}
+	-\partial_{x_0}I = \int_\Omega \lambda \frac{\partial G}{\partial x_0}\:\mathrm{d}x
+	\hspace{30pt}
+	-\partial_{y_0}I = \int_\Omega \lambda \frac{\partial G}{\partial y_0}\:\mathrm{d}x.
+\end{align}
+Thus we have descent directions for $x_0$, $y_0$ pointing to the minimum $I(x^*,y^*)$ which can be updated in terms of the Lagrange multiplier. Starting from any position $(x_0^0,y_0^0)\in\Omega$, we get the following update steps:
+\begin{itemize}
+	\item[(1)] find solution to $\Delta\phi^n = G(x_0^n,y_0^n)$ in $\Omega$, $\left. \phi^n\right|_{\partial\Omega}=0$
+	\item[(2)] find solution to $\Delta\lambda^n = 0$ in $\Omega$, $\left. \lambda^n\right|_{\partial\Omega}=g-\frac{\partial \phi^n}{\partial n}$
+	\item[(3)] compute $\partial_{x_0}I, \partial_{y_0}I$ according to (\ref{eq:19})
+	\item[(4)] update $x_0^{n+1}=x_0^n - \alpha\partial_{x_0}I$, $y_0^{n+1}=x_0^n - \alpha\partial_{y_0}I$
+\end{itemize}
+where $\alpha\in\mathbb R_+$ has to be chosen accordingly.

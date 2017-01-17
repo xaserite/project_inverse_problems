@@ -1,17 +1,14 @@
 problem a(phi,v)= int2d(Th)(dx(phi)*dx(v)+dy(phi)*dy(v))
-						+ int2d(Th) (G(x,xn,y,yn)*v)
-						+	on(C0,phi=0)
-						;
+	+ int2d(Th) (G(x,xn,y,yn)*v)
+	+ on(C0,phi=0);
+	
 problem b(lambda,v)= int2d(Th)(dx(lambda)*dx(v)+dy(lambda)*dy(v))
-							+ on(C0,lambda = g - dx(phi)*N.x - dy(phi)*N.y)
-							;
+	+ on(C0,lambda = g - dx(phi)*N.x - dy(phi)*N.y);
 
 problem initial(phi0,v)= int2d(Th)(dx(phi0)*dx(v)+dy(phi0)*dy(v))
-						+ int2d(Th) (G(x,x0,y,y0)*v)
-						+	on(C0,phi0=0)
-						;
+	+ int2d(Th) (G(x,x0,y,y0)*v)
+	+ on(C0,phi0=0);
 
-func real G(real x, real x0, real y, real y0)
-{
+func real G(real x, real x0, real y, real y0){
   return exp(-(x-x0)^2-(y-y0)^2);
 }
