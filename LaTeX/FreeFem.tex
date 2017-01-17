@@ -36,7 +36,9 @@ We use a generic gradient descent algorithm to find the source position.\\
 \end{algorithmic}
 \end{algorithm}
 
-We know that $\frac{\partial I}{\partial x_0} = -\int_{\Omega}\lambda \frac{\partial G}{\partial x_0} dx$ and $\frac{\partial I}{\partial y_0} = -\int_{\Omega}\lambda \frac{\partial G}{\partial y_0} dx$. Therefore we need to calculate $\nabla G(x_0,y_0)$ and $\lambda$. To obtain $\lambda$ we compute problem \verb|b| for which we need the solution $\phi$ to problem \verb|a| first.
+We know that $-\frac{\partial I}{\partial x_0} = \int_{\Omega}\lambda \frac{\partial G}{\partial x_0} dx$ and $-\frac{\partial I}{\partial y_0} = \int_{\Omega}\lambda \frac{\partial G}{\partial y_0} dx$; it remains to compute these expressions.
+
+ $\nabla G(x_0,y_0)$ we get straight-forwardly through finite differences. For $\lambda$ we compute problem \verb|b| for which we need the solution $\phi$ to problem \verb|a| first.
 
 Then we choose the coefficient $\alpha_k$ according to the magnitude of the gradient norm. Since its size may vary depending on the optimal position $(x_0,y_0)$, we look at the ratio between initial norm \verb|refnorm| and current \verb|norm| (both are squared). If the norm is relatively large, we use an effective step size of $\sim 0.1$ ($\alpha = 0.1\:\sqrt{\verb|norm|}^{-1}$), while in the regime close to optimum we choose $\alpha=1$.
 
