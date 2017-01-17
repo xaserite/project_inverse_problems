@@ -26,7 +26,7 @@ Thus, taking the limit $\epsilon\to 0$, we gain a necessary condition for the mi
 \end{equation}
 Since $\widetilde{\phi}$ is arbitrary, we have shown that all directional derivatives of $I$ at $\phi^*$ must be zero. We can now conclude from the following two claims that this is already sufficient. 
 \begin{itemize}
-	\item \underline{first claim:} $\mathcal C$ is convex.\\
+	\item \underline{first claim:} $\mathcal C$ is convex. ($\Rightarrow \mathcal{C}\times\Omega$ convex immediately)\\
 	Let $\alpha\in(0,1)$, $\phi_1,\phi_2\in\mathcal C$. Then
 	\begin{equation*}
 		\Delta \left(\alpha\phi_1 + (1-\alpha)\phi_2\right)
@@ -156,4 +156,4 @@ Thus we have descent directions for $x_0$, $y_0$ pointing to the minimum $I(x^*,
 	\item[(3)] compute $\partial_{x_0}I, \partial_{y_0}I$ according to (\ref{eq:19})
 	\item[(4)] update $x_0^{n+1}=x_0^n - \alpha\partial_{x_0}I$, $y_0^{n+1}=x_0^n - \alpha\partial_{y_0}I$
 \end{itemize}
-where $\alpha\in\mathbb R_+$ has to be chosen accordingly. Having shown that $\mathcal{C}\times\Omega$ and $I$ are convex, we are guaranteed to have convergence.
+where $\alpha\in\mathbb R_+$ has to be chosen accordingly. Having shown that $\mathcal{C}\times\Omega$ and $I$ are convex, we are guaranteed to have convergence, albeit its speed heavily depends on $\alpha$.
