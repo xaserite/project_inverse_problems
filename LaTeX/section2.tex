@@ -80,6 +80,7 @@ We now integrate $\lambda\Delta \widetilde{\phi}$ by parts twice and obtain, not
 which must be fulfilled for all $\lambda$ and all $\widetilde{\phi}$, thereby giving us necessary and sufficient conditions on $(x_0,y_0)$. $\mathcal{C}$ is spanned by the linear, self-adjoint operator $\Delta$. We have only used the adjoint in the first part, therefore we call (\ref{eq:12}) pseudo adjoint equation.
 
 \subsection{Application of the Lagrange multiplier to the necessary condition (\ref{eq:8})}
+In order to find the minimum in $\mathcal{C}$, we need to combine conditions for the optimum and Lagrange multiplier. 
 Subtracting pseudo adjoint equation and necessary condition on $\phi$ from each other, we obtain
 \begin{align}\label{eq:13}
 	&\int_\Omega \widetilde{\phi} \Delta\lambda \:\mathrm{d}x
@@ -121,7 +122,7 @@ We calculate the derivatives of $I$ wrt. $x_0,y_0$:
 		\frac{\partial}{\partial n}\frac{\partial\widetilde{\phi}}{\partial y_0}
 	\:\mathrm{d}s. \label{eq:15}
 \end{align}
-Now it holds for all $\widetilde{\phi}\in\mathcal{C}$, $\lambda\in H^1_0(\Omega)$:
+Now it holds for all $\widetilde{\phi}\in\mathcal{C}$, $\lambda\in H^1(\Omega)$:
 \begin{align}\label{eq:16}
 	&\Delta\widetilde{\phi} = G\\
 	\Rightarrow &\int_\Omega \lambda
@@ -155,4 +156,4 @@ Thus we have descent directions for $x_0$, $y_0$ pointing to the minimum $I(x^*,
 	\item[(3)] compute $\partial_{x_0}I, \partial_{y_0}I$ according to (\ref{eq:19})
 	\item[(4)] update $x_0^{n+1}=x_0^n - \alpha\partial_{x_0}I$, $y_0^{n+1}=x_0^n - \alpha\partial_{y_0}I$
 \end{itemize}
-where $\alpha\in\mathbb R_+$ has to be chosen accordingly.
+where $\alpha\in\mathbb R_+$ has to be chosen accordingly. Having shown that $\mathcal{C}\times\Omega$ and $I$ are convex, we are guaranteed to have convergence.
