@@ -4,13 +4,14 @@ plot( C0(80)// to see the border of the domain
 	//+ C11(5)+C12(20)+C13(5)+C14(20)
 	//+ C21(5)+C22(20)+C23(5)+C24(20),
 	,wait=true);
-mesh Th=buildmesh( C0(80)
+int Nh = 2;
+mesh Th=buildmesh( C0(40*Nh)
 	//+ C11(5)+C12(20)+C13(5)+C14(20)
 	//+ C21(5)+C22(20)+C23(5)+C24(20)
 	);
 plot(Th,wait=1);
 //
-real x0 = .95, y0 = 0, eps=1.e-2, dx0=1.e-5, dy0=1.e-5,dIdx0=5.,dIdy0=5.,dGdx0,dGdy0,
+real x0 = 0.95, y0 = 0., eps=1.e-2, dx0=1.e-5, dy0=1.e-5,dIdx0=5.,dIdy0=5.,dGdx0,dGdy0,
 		xn=0., yn=0., refnorm=1, xv, yv,stop=1.e-15;
 int i,imax = 100;
 fespace Vh(Th,P2); Vh phi,phi0,lambda=1000000,v;
@@ -27,10 +28,12 @@ func real G(real x, real x0, real y, real y0)
 
 func real alpha(real H, real R)
 {
-	if(H/R>eps)
+	/*if(H/R>eps)
 		return .1/sqrt(H);
 	else 
-		return 1.;
+		return 1.;*/
+
+  return 2.;
 }
 
 problem a(phi,v)= int2d(Th)(dx(phi)*dx(v)+dy(phi)*dy(v))
@@ -65,4 +68,7 @@ while(sqrt(norm)>stop){
 		,cmm="norm= "+sqrt(norm)+"; x= "+xn+"; y= "+yn);
   cout << "norm = " << " " << sqrt(norm) << " | eps = " << eps << endl;
 	i++;
-}						
+  if(i==1000) break;
+}				
+
+cout << i << " iterations" << endl;			

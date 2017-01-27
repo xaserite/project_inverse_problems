@@ -12,7 +12,23 @@ For the first test case, we take $(0.5, 0.5)$ as the coordinates of the source. 
 	\caption{Converged solution of source position}
 	\label{0505}
 \end{figure}
-We can see on figure \ref{0505} that the position has been found by the algorithm (top left corner) and the colors represent the values of the function $Phi$ where the maximum is on the source as expected.
+We can see on figure \ref{0505} that the position has been found by the algorithm (top left corner) and the colors represent the values of the function $\phi$ where the maximum is on the source as expected.
+
+Let's see how many iterations it takes for the  loop to converge with a convergence criteria of $10^{-16}$.\\
+\begin{center}
+$\begin{array}{|c|c|}
+	\hline
+	\text{Number of points} & \text{Iterations} \\
+	\hline
+	40 & 45\\
+	80 & 46\\
+	160 & 45 \\
+	320 & 46\\
+	\hline
+\end{array}$
+\end{center}
+
+As we can see, the number of iterations needed to converge do not depends on the size of the mesh.
 
 \subsection{Second test case}
 
@@ -23,5 +39,6 @@ For the second test case, we take $(0.95,0)$ as the coordinates of the source.\\
 	\caption{Converged solution of source position}
 	\label{0950}
 \end{figure}
-On the top left corner we can see that the position of the source has been found. However the maximum of the function $Phi$ is not at this position. This is because we have a boundary condition that impose $\left.\Phi\right|_{\partial\Omega}=0$
+On the top left corner we can see that the position of the source has been found. However the maximum of the function $\phi$ is not at this position. This is because we have a boundary condition that impose $\left.\Phi\right|_{\partial\Omega}=0$.
+
  
